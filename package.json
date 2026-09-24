@@ -1,0 +1,29 @@
+{
+  "name": "push-institucional-back",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API do site institucional PUSH — tracking de visitantes, leads, Meta Conversions API e painel administrativo",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/migrate.js",
+    "create-admin": "node src/scripts/create-admin.js",
+    "test": "node --test --test-concurrency=1 test/*.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.3",
+    "express": "^4.22.3",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.10",
+    "postgres": "^3.4.9",
+    "zod": "^4.6.5"
+  }
+}
