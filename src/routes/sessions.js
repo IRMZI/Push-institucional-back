@@ -248,6 +248,18 @@ async function sessionJourney(id) {
           FROM conversoes WHERE session_id = ${id} ORDER BY criado_em`,
         sql`SELECT id, nome, status, criado_em FROM leads WHERE session_id = ${id} AND deletado_em IS NULL ORDER BY criado_em`,
     ]);
+    // visit_start usa o relógio do servidor; os demais, o do navegador. Ancora o início
+    // da visita no primeiro evento dela para a linha do tempo ficar na ordem certa.
+    const firstByVisit = new Map();
+    for (const e of events) {
+        if (!e.visit_id) continue;
+        const t = new Date(e.ocorrido_em).getTime();
+        if (!firstByVisit.has(e.visit_id) || t < firstByVisit.get(e.visit_id)) firstByVisit.set(e.visit_id, t);
+    }
+    for (const e of events) {
+        if (e.tipo === "visit_start" && firstByVisit.has(e.visit_id)) e.ocorrido_em = new Date(firstByVisit.get(e.visit_id) - 1);
+    }
+    events.sort((a, b) => new Date(a.ocorrido_em) - new Date(b.ocorrido_em) || (a.tipo === "visit_start" ? -1 : b.tipo === "visit_start" ? 1 : a.id - b.id));
     return { session, events, conversoes, leads };
 }
 
