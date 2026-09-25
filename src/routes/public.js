@@ -18,7 +18,8 @@ router.get("/public/site", async (req, res) => {
         const versao = Math.max(latest, ...rows.map((c) => new Date(c.atualizado_em).getTime()), 0);
         const etag = `"site-${versao}-${rows.length}-${full ? 1 : 0}"`;
         res.setHeader("ETag", etag);
-        res.setHeader("Cache-Control", "public, max-age=30, stale-while-revalidate=300");
+        // no-cache + ETag: o navegador sempre revalida (304 barato) — edição do painel aparece na hora
+        res.setHeader("Cache-Control", "no-cache");
         if (req.headers["if-none-match"] === etag) return res.status(304).end();
         res.json({ versao, conteudo: content, cases });
     } catch (err) {
@@ -36,7 +37,7 @@ router.get("/public/cases/:slug", async (req, res) => {
         if (i === -1) return res.status(404).json({ error: "Case não encontrado." });
         const [item] = await serializeCases([rows[i]]);
         const neighbor = (c) => (c ? { slug: c.slug, cliente: c.cliente } : null);
-        res.setHeader("Cache-Control", "public, max-age=30");
+        res.setHeader("Cache-Control", "no-cache");
         res.json({ case: item, anterior: neighbor(rows[i - 1] || rows[rows.length - 1]), proximo: neighbor(rows[i + 1] || rows[0]) });
     } catch (err) {
         console.error("Erro ao carregar case:", err);

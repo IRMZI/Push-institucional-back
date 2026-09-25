@@ -42,15 +42,34 @@ DATABASE_URL=postgres://.../push_site_test JWT_SECRET=... ADMIN_USERNAME=admin A
 | GET | `/conversoes` · POST `/conversoes/:id/reenviar` | auth | lista com status da CAPI · reenvio manual |
 | CRUD | `/tags`, `/campaigns`, `/users` (só admin) | auth | configurações |
 | GET · PUT | `/settings/whatsapp-templates` | auth | mensagens prontas do WhatsApp |
+| GET | `/public/site` (`?full=1`) | público | conteúdo do site + cases publicados (ETag) — usado no build SSG e no navegador |
+| GET | `/public/cases/:slug` | público | case publicado + anterior/próximo |
+| GET | `/media/:id/:largura.:formato` | público | imagem AVIF/WebP (cache imutável de 1 ano) |
+| GET · PUT | `/cms/content`, `/cms/content/:bloco` | auth | textos do site, bloco a bloco (validados) |
+| CRUD | `/cms/cases`, `/cms/cases/:id` · POST `/cms/cases/ordem` · PATCH `/cms/cases/:id/publicado` | auth | cases |
+| POST · GET · PATCH · DELETE | `/cms/media` | auth | upload (corpo binário `image/*`, até 20 MB) e biblioteca |
+| GET · POST | `/cms/status`, `/cms/publicar` | auth | status e disparo do rebuild do site (SEO) |
 
 Filtros comuns: `range=today|7d|30d|90d` ou `from=YYYY-MM-DD&to=YYYY-MM-DD` (dias no fuso `TZ_REPORTS`), `page`, `limit`.
 Leads: `q, status, servico, investimento, origem, campanha, tag`. Sessões: `q, convertido, dispositivo, origem, tag`. Conversões: `tipo, capi_status`.
 
 ## Tabelas
 
-`visitor_sessions` · `session_events` · `conversoes` · `leads` · `lead_notes` · `tags` · `session_tags` · `lead_tags` · `campaigns` · `admin_users` · `app_settings`
+`visitor_sessions` · `session_events` · `conversoes` · `leads` · `lead_notes` · `tags` · `session_tags` · `lead_tags` · `campaigns` · `admin_users` · `app_settings` · **CMS:** `cases` · `site_content` · `media` · `media_variants`
 
 As migrations ficam em `src/migrate.js` e são **idempotentes** (`IF NOT EXISTS` / `ON CONFLICT`): podem rodar a cada deploy.
+
+## CMS (conteúdo do site)
+
+Tudo que aparece no site é editado no painel (**Site → Cases / Conteúdo / Mídia**):
+
+- **Cases** (`cases`): cliente, slug, categorias, resumo, resultado em destaque, desafio / solução / resultado, entregas, capa, galeria, SEO, formato na grade, rascunho/publicado e ordem.
+- **Conteúdo** (`site_content`): hero, sobre, serviços, título da seção de cases, break, contato e formulário, página de case, contatos (WhatsApp, e-mail, Instagram), rodapé e SEO. Cada bloco é validado com zod (`src/lib/cms.js`).
+- **Mídia** (`media` + `media_variants`): cada upload é normalizado (rotação EXIF, sem metadados) e convertido com `sharp` em **AVIF + WebP** nas larguras 640/1280/1920. Os bytes ficam no próprio Postgres — não precisa de volume no Coolify e o backup do banco já leva as imagens.
+
+O seed (`src/seed/content.json` e `src/seed/cases.json`) só roda com o banco vazio e traz os 5 cases e todos os textos atuais do site.
+
+**Publicação:** as edições aparecem no site na hora (o front busca `/public/site` ao abrir). O HTML pré-renderizado (o que Google e redes sociais leem) é regerado no build do front; configure `SITE_DEPLOY_HOOK_URL` (webhook de deploy do Coolify) e o botão **Publicar no site** do painel dispara o rebuild.
 
 ## Como o tracking funciona
 
@@ -94,7 +113,8 @@ Com `LEAD_WEBHOOK_SECRET`, o header `X-Push-Signature: sha256=<hmac do corpo>` p
    - Healthcheck: `GET /api/health`.
    - Variáveis: copie o `.env.example` e preencha. `FRONTEND_URL` precisa conter o domínio do site.
    - Domínio: ex. `https://api.pushagencia.com.br`.
-3. Na primeira subida a API roda as migrations e cria o admin de `ADMIN_USERNAME`/`ADMIN_PASSWORD`.
+3. Na primeira subida a API roda as migrations, cria o admin de `ADMIN_USERNAME`/`ADMIN_PASSWORD` e popula o CMS.
+4. **Publicar no site:** no app do front no Coolify, copie o *Deploy Webhook* (Application → Webhooks) para `SITE_DEPLOY_HOOK_URL` e um token de API do Coolify para `SITE_DEPLOY_HOOK_TOKEN`.
 
 ### Primeiro admin e novos usuários
 
