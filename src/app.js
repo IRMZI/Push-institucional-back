@@ -18,13 +18,15 @@ function createApp() {
             // Sem origin (curl, healthcheck) passa; origem desconhecida é bloqueada sem erro no log
             origin: (origin, cb) => cb(null, !origin || allowed.has(origin)),
             methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-            allowedHeaders: ["Content-Type", "Authorization"],
+            allowedHeaders: ["Content-Type", "Authorization", "X-Filename", "X-Alt"],
             exposedHeaders: ["Content-Disposition"],
             maxAge: 86400,
         })
     );
 
-    app.use(express.json({ limit: "32kb" }));
+    // Upload de mídia precisa do corpo binário: registrado antes do parser JSON
+    app.use("/api/cms", require("./routes/cms"));
+    app.use(express.json({ limit: "64kb" }));
     // navigator.sendBeacon envia text/plain (evita preflight de CORS)
     app.use(express.text({ type: "text/plain", limit: "32kb" }));
 
@@ -47,6 +49,7 @@ function createApp() {
     app.use("/api/campaigns", require("./routes/campaigns"));
     app.use("/api/users", require("./routes/users"));
     app.use("/api/settings", require("./routes/settings"));
+    app.use("/api", require("./routes/public"));
 
     app.use("/api", (_req, res) => res.status(404).json({ error: "Rota não encontrada." }));
 

@@ -1,0 +1,81 @@
+{
+  "seo": {
+    "titulo": "PUSH — We push businesses forward.",
+    "descricao": "Estratégia, tecnologia e aquisição para empresas que querem crescer. Sites, landing pages, tráfego pago e estratégia digital — Novo Hamburgo, RS."
+  },
+  "contatos": {
+    "whatsapp": "",
+    "email": "contato@pushagencia.com.br",
+    "instagram": "https://www.instagram.com/pushagencia/",
+    "cidade": "Novo Hamburgo",
+    "regiao": "RS",
+    "mensagem_whatsapp": "Oi, PUSH! Vim pelo site e quero conversar sobre o próximo passo da minha empresa."
+  },
+  "hero": {
+    "kicker_esquerda": "Strategy · Technology · Acquisition",
+    "kicker_direita": "Novo Hamburgo — RS",
+    "titulo": ["WE *PUSH*", "BUSINESSES", "FORWARD."],
+    "subtitulo": "Estratégia, tecnologia e aquisição para empresas que querem crescer.",
+    "cta": "Conheça nosso trabalho",
+    "scroll": "Scroll to explore"
+  },
+  "sobre": {
+    "label": "PUSH",
+    "titulo": ["Pensamos negócio.", "Construímos crescimento."],
+    "texto": "A PUSH conecta estratégia, tecnologia e performance para transformar presença digital em oportunidades reais de negócio.",
+    "destaques": ["estratégia", "tecnologia", "performance"],
+    "pilares": ["Estratégia", "Tecnologia", "Performance"]
+  },
+  "servicos": {
+    "label": "O que fazemos",
+    "titulo": ["Da estratégia", "à conversão."],
+    "itens": [
+      {
+        "titulo": "Sites & Landing Pages",
+        "descricao": "Experiências digitais pensadas para posicionar, comunicar e converter.",
+        "pontos": ["Sites institucionais", "Landing pages de campanha", "UX e copy de conversão"],
+        "visual": "rings",
+        "opcao_formulario": "site_landing"
+      },
+      {
+        "titulo": "Tráfego Pago",
+        "descricao": "Aquisição orientada por estratégia, dados e performance.",
+        "pontos": ["Meta Ads e Google Ads", "Tracking e Conversions API", "Otimização por custo por lead"],
+        "visual": "vector",
+        "opcao_formulario": "trafego_pago"
+      },
+      {
+        "titulo": "Estratégia Digital",
+        "descricao": "Direção, posicionamento e estrutura para acelerar negócios.",
+        "pontos": ["Diagnóstico e posicionamento", "Funil e jornada", "Planejamento de crescimento"],
+        "visual": "grid",
+        "opcao_formulario": "estrategia"
+      }
+    ]
+  },
+  "cases_secao": {
+    "label": "Selected work",
+    "titulo": ["Trabalho que", "fala por nós."]
+  },
+  "break": {
+    "linha1": "STRATEGY × TECHNOLOGY × PERFORMANCE",
+    "linha2": "BUILD. TEST. GROW. REPEAT."
+  },
+  "contato": {
+    "label": "Contato",
+    "titulo": ["READY FOR", "A *PUSH?*"],
+    "texto": "Vamos conversar sobre o próximo passo da sua empresa.",
+    "cta": "Falar com a PUSH",
+    "form_titulo": "Diagnóstico inicial",
+    "form_texto": "Conte um pouco sobre o momento da sua empresa. A gente responde pelo WhatsApp.",
+    "sucesso_titulo": "Recebemos.",
+    "sucesso_texto": "Em breve a gente fala com você."
+  },
+  "rodape": {
+    "claim": "Estratégia, tecnologia e aquisição para empresas que querem crescer."
+  },
+  "case_pagina": {
+    "cta_titulo": "Quer um resultado assim?",
+    "cta": "Falar com a PUSH"
+  }
+}

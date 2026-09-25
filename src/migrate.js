@@ -218,6 +218,87 @@ async function migrate(sql) {
       atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`;
 
+    // ─── CMS: mídia, cases e conteúdo do site ───
+    // Imagens ficam no próprio Postgres (variantes AVIF/WebP geradas no upload):
+    // sem volume extra no Coolify e o backup do banco já inclui tudo.
+    await sql`
+    CREATE TABLE IF NOT EXISTS media (
+      id UUID PRIMARY KEY,
+      nome VARCHAR(255),
+      mime_original VARCHAR(60),
+      width INT NOT NULL,
+      height INT NOT NULL,
+      larguras INT[] NOT NULL DEFAULT '{}',
+      alt VARCHAR(300),
+      tamanho_total INT NOT NULL DEFAULT 0,
+      criado_por VARCHAR(100),
+      criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`;
+    await sql`
+    CREATE TABLE IF NOT EXISTS media_variants (
+      media_id UUID NOT NULL REFERENCES media(id) ON DELETE CASCADE,
+      largura INT NOT NULL,
+      formato VARCHAR(10) NOT NULL,
+      conteudo BYTEA NOT NULL,
+      tamanho INT NOT NULL,
+      PRIMARY KEY (media_id, largura, formato)
+    )`;
+
+    await sql`
+    CREATE TABLE IF NOT EXISTS cases (
+      id SERIAL PRIMARY KEY,
+      slug VARCHAR(120) NOT NULL,
+      cliente VARCHAR(160) NOT NULL,
+      tags TEXT[] NOT NULL DEFAULT '{}',
+      ano VARCHAR(10),
+      resumo TEXT,
+      desafio TEXT,
+      solucao TEXT,
+      resultado TEXT,
+      entregas TEXT[] NOT NULL DEFAULT '{}',
+      destaque_valor VARCHAR(40),
+      destaque_label VARCHAR(160),
+      url VARCHAR(500),
+      layout VARCHAR(20) NOT NULL DEFAULT 'feature',
+      arte JSONB NOT NULL DEFAULT '{"kind":"rings","origin":[0.6,0.55],"tone":"blue"}',
+      capa_id UUID REFERENCES media(id) ON DELETE SET NULL,
+      capa_alt VARCHAR(300),
+      galeria JSONB NOT NULL DEFAULT '[]',
+      seo_titulo VARCHAR(160),
+      seo_descricao VARCHAR(300),
+      publicado BOOLEAN NOT NULL DEFAULT false,
+      ordem INT NOT NULL DEFAULT 0,
+      criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )`;
+    await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_cases_slug ON cases (LOWER(slug))`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_cases_ordem ON cases (publicado, ordem)`;
+
+    await sql`
+    CREATE TABLE IF NOT EXISTS site_content (
+      chave VARCHAR(60) PRIMARY KEY,
+      valor JSONB NOT NULL,
+      atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      atualizado_por VARCHAR(100)
+    )`;
+
+    // Seed do CMS com o conteúdo atual do site (só insere o que ainda não existe)
+    const content = require("./seed/content.json");
+    for (const [chave, valor] of Object.entries(content)) {
+        await sql`INSERT INTO site_content (chave, valor) VALUES (${chave}, ${sql.json(valor)}) ON CONFLICT (chave) DO NOTHING`;
+    }
+    const seedCases = require("./seed/cases.json");
+    const [{ n: totalCases }] = await sql`SELECT COUNT(*)::int AS n FROM cases`;
+    if (totalCases === 0) {
+        for (const [i, c] of seedCases.entries()) {
+            await sql`
+              INSERT INTO cases (slug, cliente, tags, resumo, entregas, destaque_valor, destaque_label, layout, arte, publicado, ordem)
+              VALUES (${c.slug}, ${c.cliente}, ${c.tags}, ${c.resumo}, ${c.entregas}, ${c.destaque_valor ?? null},
+                      ${c.destaque_label ?? null}, ${c.layout}, ${sql.json(c.arte)}, true, ${i})
+              ON CONFLICT DO NOTHING`;
+        }
+    }
+
     // Seeds idempotentes
     const tags = [
         ["Quente", "#FF5A4E"],

@@ -1,0 +1,49 @@
+[
+  {
+    "slug": "wall-street-imoveis",
+    "cliente": "Wall Street Imóveis",
+    "tags": ["Real Estate", "Digital", "Performance"],
+    "resumo": "Presença digital e aquisição para uma imobiliária que precisava transformar audiência em atendimentos qualificados.",
+    "entregas": ["Site e páginas de imóveis", "Campanhas de performance", "Tracking de leads"],
+    "layout": "feature",
+    "arte": { "kind": "rings", "origin": [0.72, 0.62], "tone": "blue" }
+  },
+  {
+    "slug": "distrito-64",
+    "cliente": "Distrito 64",
+    "tags": ["Strategy", "Digital", "Growth"],
+    "resumo": "Direção estratégica e estrutura digital para acelerar o crescimento da marca.",
+    "entregas": ["Posicionamento", "Estrutura digital", "Plano de crescimento"],
+    "layout": "tall",
+    "arte": { "kind": "vector", "origin": [0.3, 0.72], "tone": "white" }
+  },
+  {
+    "slug": "henrique-filipin",
+    "cliente": "Henrique Filipin",
+    "tags": ["Landing Page", "Paid Media"],
+    "resumo": "Landing page e mídia paga desenhadas para gerar conversas comerciais desde o primeiro dia.",
+    "entregas": ["Landing page", "Meta Ads", "Mensuração de conversões"],
+    "destaque_valor": "+15",
+    "destaque_label": "leads nas primeiras semanas",
+    "layout": "square",
+    "arte": { "kind": "dot", "origin": [0.5, 0.5], "tone": "blue" }
+  },
+  {
+    "slug": "alabama",
+    "cliente": "Alabama",
+    "tags": ["Digital", "Strategy"],
+    "resumo": "Estratégia e presença digital pensadas para posicionar a marca com clareza.",
+    "entregas": ["Estratégia digital", "Presença online"],
+    "layout": "wide",
+    "arte": { "kind": "grid", "origin": [0.25, 0.4], "tone": "white" }
+  },
+  {
+    "slug": "donnfit",
+    "cliente": "Donnfit",
+    "tags": ["Digital", "Performance"],
+    "resumo": "Estrutura digital e campanhas orientadas a performance.",
+    "entregas": ["Estrutura digital", "Campanhas de performance"],
+    "layout": "panorama",
+    "arte": { "kind": "wave", "origin": [0.82, 0.5], "tone": "blue" }
+  }
+]
